@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>2023年凸版年会抽奖</title>
+
+	<link rel="stylesheet" href="static/css/bootstrap-3.3.4.css">
+	<link rel="stylesheet" type="text/css" href="static/css/style.css">
+	<link rel="stylesheet" type="text/css" href="static/css/index.css">
+
+	<script src="static/js/jquery-3.3.1.js"></script>
+	<script src="static/js/bootstrap.min.js"></script>
+	<script src="static/js/confetti.browser.min.js" defer></script> 
+	<script type="text/javascript" src="static/js/transform.js"></script>
+	<script type="text/javascript" src="static/js/tick.js"></script>
+	<script type="text/javascript" src="static/js/3d.js"></script>
+	<script type="text/javascript" src="static/js/lucky.js"></script>
+	<script type="text/javascript" src="static/js/data.js"></script>
+	<script type="text/javascript" src="static/js/raffle.js"></script>
+
+	<link rel="stylesheet" href="live2d/live2d-widget/all.min.css">
+	<script src="live2d/live2d-widget/autoload.js"></script>
+</head>
+
+<body>
+
+	<div>
+		<div class="powerBy">Power By Mando.Chen</div>
+		<img class="toppan" src="style/toppan.png"/>
+		<video id="myvideo" autoplay muted loop style="width: 100%; display: none;">
+			<source  src="style/党建大气红色金色粒子飘动舞台背景.mp4">
+		</video>
+		<audio id="myaudio" loop="true" class="none">
+			<source src="style/彩虹节拍.mp3" style="width: 100%">
+		</audio>
+		<div class="row action-outer">
+			<div class="col-md-4 btns hidden-actions">
+				<div class="btn-group">
+					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false" id="theme" onclick="checkReward()">
+						奖项 <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li><a id="nine" href="#" onclick="changeReward('九等奖')">九等奖</a></li>
+						<li><a id="eight" href="#" onclick="changeReward('八等奖')">八等奖</a></li>
+						<li><a id="seven" href="#" onclick="changeReward('七等奖')">七等奖</a></li>
+						<li><a id="six" href="#" onclick="changeReward('六等奖')">六等奖</a></li>
+						<li><a id="five" href="#" onclick="changeReward('五等奖')">五等奖</a></li>
+						<li><a id="four" href="#" onclick="changeReward('四等奖')">四等奖</a></li>
+						<li><a id="three" href="#" onclick="changeReward('三等奖')">三等奖</a></li>
+						<li><a id="two" href="#" onclick="changeReward('二等奖')">二等奖</a></li>
+						<li><a id="one" href="#" onclick="changeReward('一等奖')">一等奖</a></li>
+						<li><a id="consolation" href="#" onclick="changeReward('安慰奖')" style="display: none;">安慰奖</a></li>
+					</ul>
+				</div>
+				<!--抽奖结果导出-->
+				<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#export_result"
+					style="outline: none">导出获奖名单</button>
+				<!--音乐开关-->
+				<button type="button" id="music-control" class="btn btn-warning" onclick="music_control()"
+					style="margin-right: 2px;">音乐减弱/满响</button>
+				<!--清除数据开关-->
+				<button type="button" id="clear-control" class="btn btn-danger" onclick="clearLocalData()">清除数据</button>
+				<!--测试开关-->
+				<!-- <button type="button" id="test-control" onclick="test_data()">测试</a> -->
+			</div>
+		</div>
+		<div class="row box">
+			<div class="col-md-4">
+				<div id="lucky_board" class="lucky_list">
+					<div class="lucky_people_list">
+						<div class="lucky_people_title" onclick="changeBoardSize()">中奖名单</div>
+						<div class="lpl_list active" style="display: block;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8 show-outer">
+				<div class="mask" style="display: none;"></div>
+				<div class="btn_outer" id="open">
+					<div class="btn_circle">开始</div>
+				</div>
+				<div class="btn_outer btn_stop" id="stop" style="display: none">
+					<div class="btn_circle2">停止</div>
+				</div>
+				<div class="container"></div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="export_result">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" style="display: inline-block">导出获奖名单</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form role="form">
+						<div class="form-group">
+							<label for="name">表名：</label>
+							<input class="form-control" id="name" placeholder="输入表名">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal"
+						onclick="tableToExcel()">导出</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+	    var myAuto = document.getElementById('myaudio');
+		var myVideo = document.getElementById('myvideo');
+		myVideo.playbackRate = 1;
+		// myVideo.style.width = window.screen.width;
+		myVideo.style.height = window.screen.height;
+		$(function () {
+			$(".action-outer").mouseover(function () {
+				$(".btns").removeClass("hidden-actions");
+				$(".btns").addClass("show-actions");
+			});
+			$(".action-outer").mouseout(function () {
+				if ($('#theme').attr('aria-expanded') == "false") {
+					$(".btns").removeClass("show-actions");
+					$(".btns").addClass("hidden-actions");
+				}
+			});
+		})
+	</script>
+</body>
+
+</html>
