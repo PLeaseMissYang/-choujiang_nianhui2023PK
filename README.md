@@ -1,4 +1,4 @@
-# 2023 凸版年会抽奖 V1.0
+# 2023 凸版年会抽奖 威力加强版
 Demo of 2023 Annual Meeting Lucky Draw 
 
 
